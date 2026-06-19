@@ -1,0 +1,37 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# ── Environment / Secrets — NEVER commit these ────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Backend runtime artifacts ─────────────────────────────────────────────────
+backend/downloads/
+backend/vector_db/
+backend/chunks/
+# Add these lines to catch loose audio artifacts:
+backend/*_converted.wav
+backend/*_chunk_*.wav
+backend/chroma.sqlite3
+
+# ── Next.js / Node ────────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+frontend/.env*.local
+
+# ── OS / Editor ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/settings.json
+*.swp
