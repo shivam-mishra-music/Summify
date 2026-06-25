@@ -22,11 +22,8 @@ app = FastAPI(title="Summify API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "https://summify-ten.vercel.app"
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],  # Open to everything for troubleshooting
+    allow_credentials=False,  # Turning this off makes the "*" wildcard fully valid
     allow_methods=["*"],
     allow_headers=["*"],
 )
