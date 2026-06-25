@@ -34,4 +34,6 @@ frontend/.env*.local
 .DS_Store
 Thumbs.db
 .vscode/settings.json
-*.swp
+*.swpbackend/bin/
+backend/start.sh
+.DS_Store
