@@ -1,41 +1,35 @@
-# ── Summify Backend — requirements.txt ────────────────────────────────────────
-# Python >= 3.10  |  Install: pip install -r requirements.txt
-# FFmpeg binary must also be installed on your system:
+# ── Summify Backend — Requirements.txt ────────────────────────────────────────
+# Python >= 3.10
+# FFmpeg must be installed on your system:
 #   macOS:   brew install ffmpeg
 #   Ubuntu:  sudo apt install ffmpeg
-#   Windows: https://ffmpeg.org/download.html
 
 # ── API server ────────────────────────────────────────────────────────────────
 fastapi>=0.111.0
 uvicorn[standard]>=0.29.0
-python-multipart>=0.0.9           # Required for FastAPI file uploads (UploadFile)
+python-multipart>=0.0.9
 
 # ── Audio / Video acquisition ─────────────────────────────────────────────────
-yt-dlp>=2024.4.9                  # Download audio from YouTube URLs
-ffmpeg-python>=0.2.0              # Python bindings for FFmpeg (import ffmpeg)
-
-# ── Speech-to-Text ────────────────────────────────────────────────────────────
-openai-whisper>=20231117          # Local Whisper transcription
-torch>=2.2.0                      # PyTorch backend required by Whisper
-torchaudio>=2.2.0
+yt-dlp>=2024.4.9
+ffmpeg-python>=0.2.0
 
 # ── LLM Orchestration — LangChain + Mistral ───────────────────────────────────
 langchain>=0.2.0
 langchain-core>=0.2.0
 langchain-community>=0.2.0
-langchain-text-splitters>=0.2.0   # RecursiveCharacterTextSplitter
-langchain-mistralai>=0.1.0        # ChatMistralAI wrapper
-mistralai>=0.4.0                  # Official Mistral client
+langchain-text-splitters>=0.2.0
+langchain-mistralai>=0.1.0
+mistralai>=0.4.0
 
 # ── RAG Pipeline ──────────────────────────────────────────────────────────────
-langchain-chroma>=0.1.0           # Chroma vector store integration (langchain_chroma)
-chromadb>=0.5.0                   # Local vector store engine
-sentence-transformers>=3.0.0      # HuggingFace embeddings (all-MiniLM-L6-v2)
-langchain-huggingface>=0.0.3      # LangChain ↔ HuggingFace bridge
+langchain-chroma>=0.1.0
+chromadb>=0.5.0
+sentence-transformers>=3.0.0
+langchain-huggingface>=0.0.3
 huggingface-hub>=0.23.0
 
 # ── Utilities ─────────────────────────────────────────────────────────────────
-python-dotenv>=1.0.0              # Load .env variables
-requests>=2.32.0                  # HTTP calls to Sarvam AI API
+python-dotenv>=1.0.0
+requests>=2.32.0
 numpy>=1.26.0
 tqdm>=4.66.0
