@@ -1,5 +1,4 @@
 import os
-import sys
 import uuid
 import tempfile
 from contextlib import asynccontextmanager
@@ -11,7 +10,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# In-memory store for rag_chains keyed by session_id
 rag_store: dict = {}
 
 @asynccontextmanager
@@ -20,10 +18,27 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Summify API", lifespan=lifespan)
 
+# ── CORS: allow all origins so Vercel → Render always works ────────────────────
+# We lock down to specific origins via the list below.
+# Add FRONTEND_URL env var in Render dashboard for production.
+_frontend_url = os.getenv("FRONTEND_URL", "").strip().rstrip("/")
+
+ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+if _frontend_url:
+    ALLOWED_ORIGINS.append(_frontend_url)
+    # Also allow with/without trailing slash variants
+    if _frontend_url.endswith("/"):
+        ALLOWED_ORIGINS.append(_frontend_url[:-1])
+    else:
+        ALLOWED_ORIGINS.append(_frontend_url + "/")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Open to everything for troubleshooting
-    allow_credentials=False,  # Turning this off makes the "*" wildcard fully valid
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -73,7 +88,10 @@ def run_pipeline(source: str, language: str) -> dict:
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    return {
+        "status": "ok",
+        "allowed_origins": ALLOWED_ORIGINS,   # useful for debugging CORS
+    }
 
 @app.post("/process/url")
 def process_url(req: ProcessURLRequest):
@@ -87,8 +105,9 @@ async def process_file(
     file: UploadFile = File(...),
     language: str = Form("english"),
 ):
+    tmp_path = None
     try:
-        suffix = os.path.splitext(file.filename)[1]
+        suffix = os.path.splitext(file.filename or "upload")[1]
         with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
             tmp.write(await file.read())
             tmp_path = tmp.name
@@ -96,14 +115,17 @@ async def process_file(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
-        if os.path.exists(tmp_path):
+        if tmp_path and os.path.exists(tmp_path):
             os.remove(tmp_path)
 
 @app.post("/chat")
 def chat(req: ChatRequest):
     rag_chain = rag_store.get(req.session_id)
     if not rag_chain:
-        raise HTTPException(status_code=404, detail="Session not found. Please re-process the meeting.")
+        raise HTTPException(
+            status_code=404,
+            detail="Session not found. Please re-process the meeting."
+        )
     from core.rag_engine import ask_question
     answer = ask_question(rag_chain, req.question)
     return {"answer": answer}
