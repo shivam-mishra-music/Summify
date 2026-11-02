@@ -15,7 +15,9 @@ _rate_limiter = InMemoryRateLimiter(
 
 def get_llm(temperature: float = 0.3):
     llm = ChatMistralAI(
-        model="mistral-small-latest",
+        # Free Mistral keys get a separate allowance per model. If this model
+        # starts returning 429s, set MISTRAL_MODEL on Render to another one.
+        model=os.getenv("MISTRAL_MODEL", "ministral-8b-latest"),
         mistral_api_key=os.getenv("MISTRAL_API_KEY"),
         temperature=temperature,
         rate_limiter=_rate_limiter,
