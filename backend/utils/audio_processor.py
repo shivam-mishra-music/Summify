@@ -2,6 +2,7 @@ import yt_dlp
 # from pydub import AudioSegment
 import subprocess
 import os
+import shutil
 import ffmpeg
 
 DOWNLOAD_DIR = "downloads"
@@ -20,6 +21,23 @@ def download_youtube_audio(url: str) -> str:
         }],
         # "quiet": True,
     }
+
+    # YouTube blocks most cloud servers ("Sign in to confirm you're not a bot").
+    # On Render, upload exported YouTube cookies as a Secret File named
+    # youtube_cookies.txt; it shows up at /etc/secrets/youtube_cookies.txt.
+    cookies_path = os.getenv("YOUTUBE_COOKIES_FILE", "/etc/secrets/youtube_cookies.txt")
+    if os.path.exists(cookies_path):
+        # yt-dlp rewrites the cookie file, and /etc/secrets is read-only,
+        # so work on a copy.
+        writable_copy = os.path.join(DOWNLOAD_DIR, "youtube_cookies.txt")
+        shutil.copyfile(cookies_path, writable_copy)
+        ydl_opts["cookiefile"] = writable_copy
+
+    # Optional: route downloads through a proxy, e.g. http://user:pass@host:port
+    proxy = os.getenv("YTDLP_PROXY")
+    if proxy:
+        ydl_opts["proxy"] = proxy
+
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         filename = ydl.prepare_filename(info).replace('.webm', '.wav').replace('.m4a', '.wav')
