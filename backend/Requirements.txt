@@ -14,22 +14,13 @@ yt-dlp>=2024.4.9
 ffmpeg-python>=0.2.0
 
 # ── LLM Orchestration — LangChain + Mistral ───────────────────────────────────
-langchain>=0.2.0
-langchain-core>=0.2.0
-langchain-community>=0.2.0
-langchain-text-splitters>=0.2.0
-langchain-mistralai>=0.1.0
-mistralai>=0.4.0
-
-# ── RAG Pipeline ──────────────────────────────────────────────────────────────
-langchain-chroma>=0.1.0
-chromadb>=0.5.0
-sentence-transformers>=3.0.0
-langchain-huggingface>=0.0.3
-huggingface-hub>=0.23.0
+# Embeddings use the Mistral API and the vector store is LangChain's in-memory
+# one, so no torch / sentence-transformers / chromadb (too big for Render free).
+langchain-core>=0.3.0
+langchain-text-splitters>=0.3.0
+langchain-mistralai>=0.2.0
 
 # ── Utilities ─────────────────────────────────────────────────────────────────
 python-dotenv>=1.0.0
 requests>=2.32.0
-numpy>=1.26.0
-tqdm>=4.66.0
+numpy>=1.26.0  # used by the in-memory vector store
