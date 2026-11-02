@@ -1,5 +1,6 @@
 import os
 import uuid
+import shutil
 import tempfile
 from contextlib import asynccontextmanager
 
@@ -100,8 +101,10 @@ def process_url(req: ProcessURLRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# Plain `def` (not async) so FastAPI runs the slow pipeline in a worker thread
+# instead of blocking the event loop for every other request.
 @app.post("/process/file")
-async def process_file(
+def process_file(
     file: UploadFile = File(...),
     language: str = Form("english"),
 ):
@@ -109,7 +112,7 @@ async def process_file(
     try:
         suffix = os.path.splitext(file.filename or "upload")[1]
         with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-            tmp.write(await file.read())
+            shutil.copyfileobj(file.file, tmp)
             tmp_path = tmp.name
         return run_pipeline(tmp_path, language)
     except Exception as e:
