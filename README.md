@@ -9,7 +9,7 @@ Summify is an AI-powered meeting intelligence platform designed to transform raw
 - **💬 RAG-Powered Conversational Engine**: Automatically indexes your transcripts into a local vector database (ChromaDB) so you can seamlessly query context-specific questions long after the meeting ends.
 - **🌐 Dual-Ingress Pipeline**: Seamlessly feeds into the pipeline via direct local file uploads (`.mp3`/`.wav`) or deep web scraping extraction of YouTube media URLs via `yt-dlp`.
 - **🎨 Ultra-Modern Interface**: Engineered with an interactive, animated fluid canvas backdrop in Next.js 16 and styled beautifully with Tailwind CSS.
-
+  
 ## 🛠️ Tech Stack
 
 - **Frontend**: Next.js (App Router), React, Tailwind CSS, TypeScript
